@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--https://youtu.be/cbHdtToeI6A?si=bx9OvKYOioxOIB1Z-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My app</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap-5.3.3/bootstrap.min.css">
+  <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
+  <script type="text/javascript" src="js/vue-3.4.37/vue.global.js"></script>
+  <script type="text/javascript" src="js/babel-standalone-7.25.3/babel.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="jumbotron">
+      <h1>My application</h1>
+      <p class="lead">Welcome to the App. A Spring Boot application!</p>
+    </div>
+    <div id="app">{{message}}</div>
+    <div class="header clearfix">
+      <nav>
+        <a href="#" id="logoutLink">Logout</a>
+      </nav>
+    </div>
+  </div>
+  <form id="logout" action="/logout" method="POST">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+  </form>
+<script>
+  $(function(){
+    $('#logoutLink').click(function(){
+      $('#logout').submit();
+    });
+  });
+</script>
+<script type="text/babel">
+  const { createApp, ref } = Vue
+  createApp({
+    setup() {
+      const message = ref('Hello vue!')
+      return {
+        message
+      }
+    },
+    template: `
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col" v-for="column in columns">{{ column.label }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="transition in transitions">
+          <td v-for="column in columns">
+            {{ this.calcStateFromTo(column.name, transition.stateFrom, transition.stateTo) }}
+          </td>
+        </tr>
+<!--        <tr v-for="name in info" :key="name.Country">
+                  <td>{{name.Country}}</td>
+                  <td>{{name.Value}}</td>
+                </tr>-->
+        </tbody>
+      </table>`,
+    data() {
+      return {
+        states: [
+          {name: "NULL", label: "NULL"},
+          {name: "wDraft", label: "Draft" },
+          {name: "wActive", label: "Active" },
+          {name: "wRetired", label: "Retired" }
+        ],
+        transitions: [
+          {stateFrom: "NULL", stateTo: "wDraft", label: "Create", name: "wCreate"}
+        ],
+        rowTransitions: [],
+      }
+    },
+    computed: {
+      columns() {
+        let result = [];
+        for (let i = 0; i < this.states.length; i++) {
+          if (i !== 0) {
+            result.push({label: '', name: ''});
+            result.push({label: '', name: ''});
+            result.push({label: '', name: ''});
+          }
+          result.push({label: this.states[i].label, stateName: this.states[i].name});
+        }
+        return result;
+      },
+    },
+    methods: {
+      calcStateFromTo: function (anyState, stateFrom, stateTo) {
+        // console.log("calcStateFromTo");
+        let result = '';
+        if (anyState !== '') {
+          // console.log(anyState);
+          if (stateFrom === stateTo) {
+            if (anyState === stateFrom) {
+              result = "from to"
+            }
+          } else {
+            if (anyState === stateFrom) {
+              result = "from"
+            } else {
+              if (anyState === stateTo) {
+                result = "to";
+              }
+            }
+          }
+        }
+        return result;
+      }
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>

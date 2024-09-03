@@ -1,0 +1,46 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.18'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'ru.mrs'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+//	implementation 'org.apache.commons:commons-lang3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+//	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+//	implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+//	implementation 'org.springframework.security:spring-security-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation 'org.webjars:jquery:3.7.1'
+//	implementation 'org.webjars:bootstrap:5.3.3'
+//	implementation 'org.webjars.npm:vue:3.4.35'
+//	implementation 'org.webjars:webjars-locator:0.52'
+	implementation 'com.h2database:h2'
+	implementation 'org.flywaydb:flyway-core'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+//	testImplementation "org.commonmark:commonmark:0.21.0"
+//	testImplementation "org.commonmark:commonmark-ext-gfm-tables:0.21.0"
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testImplementation "org.mockito:mockito-core"
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
