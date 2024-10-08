@@ -1,5 +1,11 @@
 <!DOCTYPE html>
-<!--https://youtu.be/cbHdtToeI6A?si=bx9OvKYOioxOIB1Z-->
+<!-- https://youtu.be/cbHdtToeI6A?si=bx9OvKYOioxOIB1Z -->
+<!-- https://stackoverflow.com/questions/48310081/how-to-draw-arrow-in-html-table-across-cells -->
+<!-- https://medium.com/@scottmatthew/using-html-canvas-with-vue-js-493e5ae60887 -->
+<!-- https://youtu.be/3tczRkNmhjg?si=aXSwn4MTBqtJTjHT -->
+<!-- https://www.youtube.com/watch?v=JaIA1k4FLG8 -->
+<!-- https://stackoverflow.com/questions/45563329/how-to-add-dynamic-ref-in-vue-js -->
+<!-- https://mydev.fun/vue/options-api-template-refs -->
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="utf-8">
@@ -7,17 +13,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My app</title>
   <link rel="stylesheet" type="text/css" href="css/bootstrap-5.3.3/bootstrap.min.css">
+  <link href="css/arrow.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
   <script type="text/javascript" src="js/vue-3.4.37/vue.global.js"></script>
   <script type="text/javascript" src="js/babel-standalone-7.25.3/babel.min.js"></script>
 </head>
 <body>
+  <!--<div>
+    <table>
+      <tr>
+        <td>1</td><td>2</td><canvas id="canvas0" width="100" height="100" style="position:absolute;top:0px;left:0px;"></canvas>
+      </tr>
+      <tr>
+        <td>3</td><td>4</td>
+      </tr>
+      <tr>
+        <td>5</td><td>6</td>
+      </tr>
+    </table>
+    <script>
+    </script>
+  </div>-->
   <div class="container">
     <div class="jumbotron">
       <h1>My application</h1>
       <p class="lead">Welcome to the App. A Spring Boot application!</p>
     </div>
-    <div id="app">{{message}}</div>
+    <div id="app">{{ message }}</div>
     <div class="header clearfix">
       <nav>
         <a href="#" id="logoutLink">Logout</a>
@@ -44,39 +66,60 @@
       }
     },
     template: `
-      <table class="table">
+      <table class="table" >
         <thead>
         <tr>
-          <th scope="col" v-for="column in columns">{{ column.label }}</th>
+          <th scope="col" v-for="column in columns">{{ column }}</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="transition in transitions">
-          <td v-for="column in columns">
-            {{ this.calcStateFromTo(column.name, transition.stateFrom, transition.stateTo) }}
-          </td>
-        </tr>
+        <div v-for="div in tbody.rowblock">
+          <tr v-for="(tr, i) in div.trow" :key="i">
+            <!--                :id="'arrow-' + i" :ref="'arrow-' + i + '-' + j"-->
+            <td v-for="(td, j) in tr.tdata" :key="j" :colspan="td.colSpan"
+                :ref="(el)=>{if(!arrElBegEndFillComplete){let checkExtArrEl=function(){if(arrElBegEnd.length===0){arrElBegEnd.push([])}else{if(arrElBegEnd[arrElBegEnd.length-1].length===2){arrElBegEnd.push([])}}};if(td.hasOwnProperty('arrowBegin')&&td.arrowBegin===!0){checkExtArrEl();arrElBegEnd[arrElBegEnd.length-1].push({arrowBegin:el})}else{if(td.hasOwnProperty('arrowEnd')&&td.arrowEnd===!0){checkExtArrEl();arrElBegEnd[arrElBegEnd.length-1].push({arrowEnd:el})}}};if(arrElBegEnd.length===arrElBegEndCount&&arrElBegEnd[arrElBegEnd.length-1].length===2){arrElBegEndFillComplete=!0}}"
+            >{{ td.title }}</td>
+            <canvas v-for="(arrow, k) in tr.canvas"
+                    :ref="(el)=>{if(arrElBegEnd[arrElBegEnd.length-1].length===2){arrElBegEnd[arrElBegEnd.length-1].push({canvas:el})}}"
+                    style="position: absolute;top:0px;left:0px"
+            ></canvas>
+          </tr>
+        </div>
 <!--        <tr v-for="name in info" :key="name.Country">
                   <td>{{name.Country}}</td>
                   <td>{{name.Value}}</td>
                 </tr>-->
         </tbody>
-      </table>`,
+      </table>
+      <button @click="displayAllRefs">Click to see all refs</button>
+    `,
     data() {
       return {
-        states: [
-          {name: "NULL", label: "NULL"},
-          {name: "wDraft", label: "Draft" },
-          {name: "wActive", label: "Active" },
-          {name: "wRetired", label: "Retired" }
-        ],
-        transitions: [
-          {stateFrom: "NULL", stateTo: "wDraft", label: "Create", name: "wCreate"}
-        ],
-        rowTransitions: [],
+        columns: ["NULL", "", "", "","Draft", "", "", "", "Active", "", "", "", "Retired"],
+        tbody: {
+          rowblock:[
+            { trow:[
+                {tdata:[{arrowBegin:true}, {}, {arrowMiddle:true}, {}, {arrowEnd:true}, {}, {}, {}, {}, {}, {}, {}, {}], canvas: [{}]},
+                {tdata:[{title: "create", colSpan: 5}, {}, {}, {}, {}, {}, {}, {}, {}], canvas: []},
+                {tdata:[{title: "title"}, {title: "title1"}, {title: "title"}], canvas: []},
+                {tdata:[{title: "title"}, {title: "title"}, {title: "title2"}], canvas: []}
+              ]
+            }
+          ],
+          arrow: {
+            start: null,
+            end: null,
+            action: ''
+          }
+        },
+        arrElBegEnd: [],
+        arrElBegEndCount: 1,
+        arrElBegEndFillComplete: false
       }
     },
     computed: {
+    },
+      /*,
       columns() {
         let result = [];
         for (let i = 0; i < this.states.length; i++) {
@@ -89,9 +132,31 @@
         }
         return result;
       },
-    },
+    },*/
     methods: {
-      calcStateFromTo: function (anyState, stateFrom, stateTo) {
+      /*checkElArrow: function(el, arrowBegin, arrowEnd) {
+        (el) => {
+          // if (true === arrowBegin) {
+            console.log('arrowBegin == true')
+          // }
+        }
+      },*/
+      displayAllRefs() {
+        console.log(this.$refs)
+      },
+      /*readTd: function (td) {
+        if (td.arrowBegin === true) {
+          if (!this.currentTransition) {
+            this.currentTransition = {
+              tdBegin: td,
+              tdEnd:null
+            }
+          } else {
+            this.currentTransition.tdBegin = td;
+          }
+        }
+      }*/
+      /*calcStateFromTo: function (anyState, stateFrom, stateTo) {
         // console.log("calcStateFromTo");
         let result = '';
         if (anyState !== '') {
@@ -111,8 +176,148 @@
           }
         }
         return result;
+      },*/
+      onMountedDrawArrow(arrowBegin, arrowEnd, arrowMiddle, canvas) {
+        function getCenter(row) {
+          let offset = $(row).offset();
+          let width = $(row).innerWidth();
+          let height = $(row).innerHeight();
+          return {
+            x: offset.left + width / 2,
+            y: offset.top + height / 2
+          }
+        }
+        function drawArrow(arrowBeginCoord, arrowEndCoord, canvas) {
+          console.log("arrowBeginCoord: " + arrowBeginCoord + " x: " + arrowBeginCoord.x + " y: " + arrowBeginCoord.y);
+          console.log("arrowEndCoord : " + arrowEndCoord + " x: " + arrowEndCoord.x + " y: " + arrowEndCoord.y);
+          canvas.style.position = "absolute;top:0px;left:0px";
+
+          let canvasContext = canvas.getContext("2d");
+          canvasContext.fillStyle = 'steelblue';
+          canvasContext.strokeStyle = 'steelblue';
+          // draw line from start to end
+          canvasContext.beginPath();
+          canvasContext.moveTo(arrowBeginCoord.x, arrowBeginCoord.y);
+          canvasContext.lineTo(arrowEndCoord.x, arrowEndCoord.y);
+          canvasContext.lineWidth = 2;
+          canvasContext.stroke();
+          // draw circle at beginning of line
+          canvasContext.beginPath();
+          canvasContext.arc(arrowBeginCoord.x, arrowBeginCoord.y, 4, 0, Math.PI * 2, true);
+          canvasContext.fill();
+          // draw pointer at end of line (needs rotation)
+          canvasContext.beginPath();
+          let angle = Math.atan2(arrowEndCoord.y - arrowBeginCoord.y, arrowEndCoord.x - arrowBeginCoord.x);
+          canvasContext.translate(arrowEndCoord.x, arrowEndCoord.y);
+          canvasContext.rotate(angle);
+          canvasContext.moveTo(0, 0);
+          canvasContext.lineTo(-10, -7);
+          canvasContext.lineTo(-10, 7);
+          canvasContext.lineTo(0, 0);
+          canvasContext.fill();
+          // reset canvas context
+          canvasContext.setTransform(1, 0, 0, 1, 0, 0);
+          return canvas;
+        }
+        drawArrow(getCenter(arrowBegin), getCenter(arrowEnd), canvas);
       }
-    }
+    },
+    mounted() {
+      // console.log(this.$refs);
+      console.log("Step mounted");
+      for (const el of this.arrElBegEnd) {
+        let arrowBegin, arrowEnd, arrowMiddle, canvas;
+        for (const aEl of el) {
+          if (aEl.hasOwnProperty('arrowBegin')) {
+            arrowBegin = aEl.arrowBegin;
+          }
+          if (aEl.hasOwnProperty('arrowEnd')) {
+            arrowEnd = aEl.arrowEnd;
+          }
+          if (aEl.hasOwnProperty('arrowMiddle')) {
+            arrowMiddle = aEl.arrowMiddle;
+          }
+          if (aEl.hasOwnProperty('canvas')) {
+            canvas = aEl.canvas;
+          }
+        }
+        console.log("arrowBegin: " + arrowBegin);
+        console.log("arrowEnd : " + arrowEnd);
+        console.log("canvas: " + canvas);
+        this.onMountedDrawArrow(arrowBegin, arrowEnd, arrowMiddle, canvas);
+      }
+      // this.onMountedDrawArrow();
+
+      // let currentTransition;
+      // var transitions = [];
+      // let canvas;
+      // let canvas = document.querySelector('canvas');
+      /*for (const El of this.arrElBegEnd[0]) {
+        if(El.hasOwnProperty('canvas')) {
+          console.log(El);
+          canvas = El.canvas;
+        }
+      }*/
+
+      // var canvasCtx = canvas.getContext("2d");
+      // this.vueCanvas = canvasCtx;
+      /*function getCellCenter(table, row, column) {
+        var tableRow = $(table).find('tr')[row];
+        var tableCell = $(tableRow).find('td')[column];
+
+        var offset = $(tableCell).offset();
+        var width = $(tableCell).innerWidth();
+        var height = $(tableCell).innerHeight();
+
+        return {
+          x: offset.left + width / 2,
+          y: offset.top + height / 2
+        }
+      }*/
+      /*var c = document.querySelector('canvas');
+      var ctx = c.getContext("2d");
+      this.vueCanvas = ctx;*/
+/*      canvas.style.top = 7 + "px";
+      canvas.style.left = 7 + "px";
+
+      var fromx = 0;
+      var fromy = 12;
+      var tox = 25;
+      var toy = 12;
+
+      var headlen = 10;   // length of head in pixels
+      var angle = Math.atan2(toy-fromy,tox-fromx);
+      var arrowSize = 2;
+      var headlen = 10;
+
+      var angle = Math.atan2(toy-fromy,tox-fromx);
+      //starting path of the arrow from the start square to the end square and drawing the stroke
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(fromx, fromy);
+      canvasCtx.lineTo(tox, toy);
+      canvasCtx.strokeStyle = "#cc0000";
+      canvasCtx.lineWidth = arrowSize;
+      canvasCtx.stroke();
+
+      //starting a new path from the head of the arrow to one of the sides of the point
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(tox, toy);
+      canvasCtx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+      //path from the side point of the arrow, to the other side point
+      canvasCtx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),toy-headlen*Math.sin(angle+Math.PI/7));
+
+      //path from the side point back to the tip of the arrow, and then again to the opposite side point
+      canvasCtx.lineTo(tox, toy);
+      canvasCtx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
+
+      //draws the paths created above
+      canvasCtx.strokeStyle = "#cc0000";
+      canvasCtx.lineWidth = arrowSize;
+      canvasCtx.stroke();
+      canvasCtx.fillStyle = "#cc0000";
+      canvasCtx.fill();*/
+    },
   }).mount('#app')
 </script>
 </body>
