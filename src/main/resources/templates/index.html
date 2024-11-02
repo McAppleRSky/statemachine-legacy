@@ -67,13 +67,13 @@
           </tr>
         </thead>
         <tbody v-for="tbody of table.body">
-          <tr v-for="trArrow in tbody.rowArrow"><!--:ref="(el)=>{let tempTdArrow=reference.tempTdArrow.pop();reference.rowArrow.push({row:el,td:tempTdArrow.td,toStateName:tempTdArrow.to,fromStateName:tempTdArrow.from})}"-->
+          <tr v-for="trArrow in tbody.rowArrow">
             <td v-for="tdArrow in trArrow.cellArrow"
-                :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from/*canvas:tempArrowCanvas.canvas*/})}}"
+                :ref="(el)=>{if(tdArrow.hasOwnProperty('canvas')){let tempCanvas=reference.tempCanvas.pop();reference.tdArrow.push({td:el,toStateName:tempCanvas.to,fromStateName:tempCanvas.from})}}"
                 :colspan="tdArrow.colSpan"
-                :class="{cellBorderRight: tdArrow.borderRight === true, cellBorderLeft: tdArrow.borderLeft === true, firstCell: tdArrow.isFirstCell === true}" >
+                :class="{cellBorderRight:tdArrow.borderRight===true,cellBorderLeft:tdArrow.borderLeft===true,firstCell:tdArrow.isFirstCell===true}" >
               <canvas v-if="tdArrow.canvas === true" class="arrow"
-                      :ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]/*canvas: el*/})}"
+                      :ref="(el)=>{reference.tempCanvas.push({from:tdArrow.arrow[0],to:tdArrow.arrow[1]})}"
               >
               </canvas>
 <!--              {{ tdArrow.title }}-->
@@ -91,7 +91,6 @@
           </tr>
         </tbody>
       </table>
-      <button @click="displayAllRefs">Click to see all refs</button>
     `,
     data() {
       return {
@@ -101,12 +100,6 @@
           tempCanvas: [],
           stateSecEl:[],
           rowEl:[],
-          // tempTdArrow: [],
-          // state:[],
-          // stateName:[],
-          // rowArrow:[],
-//          arrowCanvas: [],
-//           arrowFromTo:[]
         },
         data: {
           content: [{
@@ -169,93 +162,9 @@
       }
     },
     computed: {
-      /*firstSellCss() {
-        return `<style>
-         .firstSell {
-            width: ${this.reference.state[0].offsetWidth/2};
-         }</style>`
-      }*/
     },
-      /*,
-      columns() {
-        let result = [];
-        for (let i = 0; i < this.states.length; i++) {
-          if (i !== 0) {
-            result.push({label: '', name: ''});
-            result.push({label: '', name: ''});
-            result.push({label: '', name: ''});
-          }
-          result.push({label: this.states[i].label, stateName: this.states[i].name});
-        }
-        return result;
-      },
-    },*/
     methods: {
-      /*checkElArrow: function(el, arrowBegin, arrowEnd) {
-        (el) => {
-          // if (true === arrowBegin) {
-            console.log('arrowBegin == true')
-          // }
-        }
-      },*/
-      displayAllRefs() {
-        console.log(this.$refs)
-      },
-      /*readTd: function (td) {
-        if (td.arrowBegin === true) {
-          if (!this.currentTransition) {
-            this.currentTransition = {
-              tdBegin: td,
-              tdEnd:null
-            }
-          } else {
-            this.currentTransition.tdBegin = td;
-          }
-        }
-      }*/
-      /*calcStateFromTo: function (anyState, stateFrom, stateTo) {
-        // console.log("calcStateFromTo");
-        let result = '';
-        if (anyState !== '') {
-          // console.log(anyState);
-          if (stateFrom === stateTo) {
-            if (anyState === stateFrom) {
-              result = "from to"
-            }
-          } else {
-            if (anyState === stateFrom) {
-              result = "from"
-            } else {
-              if (anyState === stateTo) {
-                result = "to";
-              }
-            }
-          }
-        }
-        return result;
-      },*/
-      onMountedDrawArrow(elSrcY, fromElSrcX, toElSrcX, _canvas, direct, canvas) {
-        function getCenterX(cell) {
-          let offset = 0 //+ $(cell).offset();
-          let width = cell.clientWidth;
-          console.log("cell : " + cell.clientWidth);console.dir(cell);
-          return cell.clientWidth / 2
-        }
-        function getCenterY(row) {
-          let offset = 0 //$(row).offset();
-          let height = row.clientHeight;
-          console.log("row : " + row.clientHeight + " " + row.clientHeight / 2);console.dir(row);
-          return row.clientHeight / 2
-        }
-        function getCenter(row) {
-          let offset = $(row).offset();
-          let width = $(row).innerWidth();
-          let height = $(row).innerHeight();
-          return {
-            x: offset.left + width / 2,
-            y: offset.top + height / 2
-          }
-        }
+      onMountedDrawArrow(direct, canvas) {
         function drawPlainArrow(beginX, endX, rowY, canvas){
           let canvasContext = canvas.getContext("2d");
           canvasContext.fillStyle = 'steelblue';
@@ -281,189 +190,22 @@
           canvasContext.lineTo(0, 0);
           canvasContext.fill();
         }
-        function drawArrow(arrowBeginCoord, arrowEndCoord, canvas) {
-          console.log("arrowBeginCoord: " + arrowBeginCoord + " x: " + arrowBeginCoord.x + " y: " + arrowBeginCoord.y);
-          console.log("arrowEndCoord : " + arrowEndCoord + " x: " + arrowEndCoord.x + " y: " + arrowEndCoord.y);
-          canvas.style.position = "absolute;top:0px;left:0px";
-
-          let canvasContext = canvas.getContext("2d");
-          canvasContext.fillStyle = 'steelblue';
-          canvasContext.strokeStyle = 'steelblue';
-          // draw line from start to end
-          canvasContext.beginPath();
-          canvasContext.moveTo(arrowBeginCoord.x, arrowBeginCoord.y);
-          canvasContext.lineTo(arrowEndCoord.x, arrowEndCoord.y);
-          canvasContext.lineWidth = 2;
-          canvasContext.stroke();
-          // draw circle at beginning of line
-          canvasContext.beginPath();
-          canvasContext.arc(arrowBeginCoord.x, arrowBeginCoord.y, 4, 0, Math.PI * 2, true);
-          canvasContext.fill();
-          // draw pointer at end of line (needs rotation)
-          canvasContext.beginPath();
-          let angle = Math.atan2(arrowEndCoord.y - arrowBeginCoord.y, arrowEndCoord.x - arrowBeginCoord.x);
-          canvasContext.translate(arrowEndCoord.x, arrowEndCoord.y);
-          canvasContext.rotate(angle);
-          canvasContext.moveTo(0, 0);
-          canvasContext.lineTo(-10, -7);
-          canvasContext.lineTo(-10, 7);
-          canvasContext.lineTo(0, 0);
-          canvasContext.fill();
-          // reset canvas context
-          canvasContext.setTransform(1, 0, 0, 1, 0, 0);
-          return canvas;
-        }
-        console.log("onMounted DrawArrow : elSrcY - " + elSrcY + ", fromElSrcX - " + fromElSrcX + ", toElSrcX - " + toElSrcX + ", canvas - " + canvas);
-        drawPlainArrow(direct ? 0 : canvas.clientWidth / 2, direct ? canvas.clientWidth : 0, canvas.clientHeight / 2, canvas);
+        drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
       }
     },
-    /*beforeMount() {
-      this.reference.state = [];
-      this.reference.stateName = [];
-      this.reference.stateSecEl = [];
-      this.reference.rowArrow = [];
-      this.reference.arrowCanvas = [];
-      this.reference.arrowFromTo = []
-    },*/
+    beforeMount() {},
     mounted() {
-      // console.log(this.$refs);
-      console.log(this.reference.tdState);
-      console.log(this.reference.stateSecEl);
-      console.log(this.reference.rowArrow);
-      // console.log(this.reference.tempArrowCanvas);
-      // console.log(this.reference.tdArrow);
-      // console.log("States : " + this.reference.state.length);
-      // console.log("First state width: " + this.reference.state[0].offsetWidth);
+      let content = JSON.stringify(this.data.content[0]);
+      console.log(content)
       $(".firstCell").css({width: this.reference.tdState[0].td.offsetWidth/2});
-      // document.querySelector(".firstCell").style.width = 2;
-      // document.querySelector(".firstCell").innerHTML = this.firstSellCss;
-      console.log("Step mounted");
       for (let arrow of this.reference.tdArrow) {
         let direct = true;
-        let canvas = arrow.td.firstChild, elSrcY = arrow.td.parentElement, toElSrcX, fromElSrcX;
-        for (let state of this.reference.tdState) {
-          if (arrow.toStateName === state.name) {
-            toElSrcX = state.td
-          }
-        }
         if (arrow.toStateName === arrow.fromStateName) {
           direct = false
-          fromElSrcX = arrow.td
-        } else {
-          for (let state of this.reference.tdState) {
-            if (arrow.fromStateName === state.name) {
-              fromElSrcX = state.td
-            }
-          }
         }
-        console.log("toElSrcX " + arrow.toStateName + " : "+ toElSrcX);
-        console.log("fromElSrcX " + arrow.fromStateName + " : "+ fromElSrcX);
-        // console.log(tdArrowCanva.canvas.height);
-        console.log(arrow);
-        console.log(arrow.td);
-        // arrow.td.firstChild.clientHeight = arrow.td.parentElement.clientHeight
-        console.log("clientHeight : " + arrow.td.parentElement.clientHeight);
-        console.log("height : " + arrow.td.firstChild.height);
         arrow.td.firstChild.height = arrow.td.parentElement.clientHeight;
-        console.log("height : " + arrow.td.firstChild.height);
-        // tdArrowCanva.canvas.$el.height = tdArrowCanva.td.$el.height;
-        // Vue.set .set(tdArrowCanva.canvas, tdArrowCanva.td.clientHeight + 'px')
-        // tdArrowCanva.canvas.box.height = tdArrowCanva.td.box.height;
-        // tdArrowCanva.canvas.box.width = tdArrowCanva.td.box.width;
-        this.onMountedDrawArrow(elSrcY, fromElSrcX, toElSrcX, canvas, direct, arrow.td.firstChild)
+        this.onMountedDrawArrow(direct, arrow.td.firstChild)
       }
-      /*for (const el of this.arrElBegEnd) {
-        let arrowBegin, arrowEnd, arrowMiddle, canvas;
-        for (const aEl of el) {
-          if (aEl.hasOwnProperty('arrowBegin')) {
-            arrowBegin = aEl.arrowBegin;
-          }
-          if (aEl.hasOwnProperty('arrowEnd')) {
-            arrowEnd = aEl.arrowEnd;
-          }
-          if (aEl.hasOwnProperty('arrowMiddle')) {
-            arrowMiddle = aEl.arrowMiddle;
-          }
-          if (aEl.hasOwnProperty('canvas')) {
-            canvas = aEl.canvas;
-          }
-        }
-        console.log("arrowBegin: " + arrowBegin);
-        console.log("arrowEnd : " + arrowEnd);
-        console.log("canvas: " + canvas);
-        this.onMountedDrawArrow(arrowBegin, arrowEnd, arrowMiddle, canvas);
-      }*/
-      // this.onMountedDrawArrow();
-
-      // let currentTransition;
-      // var transitions = [];
-      // let canvas;
-      // let canvas = document.querySelector('canvas');
-      /*for (const El of this.arrElBegEnd[0]) {
-        if(El.hasOwnProperty('canvas')) {
-          console.log(El);
-          canvas = El.canvas;
-        }
-      }*/
-
-      // var canvasCtx = canvas.getContext("2d");
-      // this.vueCanvas = canvasCtx;
-      /*function getCellCenter(table, row, column) {
-        var tableRow = $(table).find('tr')[row];
-        var tableCell = $(tableRow).find('td')[column];
-
-        var offset = $(tableCell).offset();
-        var width = $(tableCell).innerWidth();
-        var height = $(tableCell).innerHeight();
-
-        return {
-          x: offset.left + width / 2,
-          y: offset.top + height / 2
-        }
-      }*/
-      /*var c = document.querySelector('canvas');
-      var ctx = c.getContext("2d");
-      this.vueCanvas = ctx;*/
-/*      canvas.style.top = 7 + "px";
-      canvas.style.left = 7 + "px";
-
-      var fromx = 0;
-      var fromy = 12;
-      var tox = 25;
-      var toy = 12;
-
-      var headlen = 10;   // length of head in pixels
-      var angle = Math.atan2(toy-fromy,tox-fromx);
-      var arrowSize = 2;
-      var headlen = 10;
-
-      var angle = Math.atan2(toy-fromy,tox-fromx);
-      //starting path of the arrow from the start square to the end square and drawing the stroke
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(fromx, fromy);
-      canvasCtx.lineTo(tox, toy);
-      canvasCtx.strokeStyle = "#cc0000";
-      canvasCtx.lineWidth = arrowSize;
-      canvasCtx.stroke();
-
-      //starting a new path from the head of the arrow to one of the sides of the point
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(tox, toy);
-      canvasCtx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
-
-      //path from the side point of the arrow, to the other side point
-      canvasCtx.lineTo(tox-headlen*Math.cos(angle+Math.PI/7),toy-headlen*Math.sin(angle+Math.PI/7));
-
-      //path from the side point back to the tip of the arrow, and then again to the opposite side point
-      canvasCtx.lineTo(tox, toy);
-      canvasCtx.lineTo(tox-headlen*Math.cos(angle-Math.PI/7),toy-headlen*Math.sin(angle-Math.PI/7));
-
-      //draws the paths created above
-      canvasCtx.strokeStyle = "#cc0000";
-      canvasCtx.lineWidth = arrowSize;
-      canvasCtx.stroke();
-      canvasCtx.fillStyle = "#cc0000";
-      canvasCtx.fill();*/
     },
   }).mount('#app')
 </script>
