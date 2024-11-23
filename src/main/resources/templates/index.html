@@ -204,7 +204,7 @@
     },*/
     beforeMount() {
       this.data.content.pop();
-      axios.get('/statetransit/v0/wSpace')
+      axios.get('/statetransit/v0/wPeople')
               .then(response => this.data.content.push(response))
     },
     mounted() {

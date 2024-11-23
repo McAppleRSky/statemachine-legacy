@@ -9,7 +9,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter @Setter
 @Entity
-@Table(name = "s_assignment"/*, schema="WDATA"*/)
+@Table(name = "s_assignment"/*, schema="wdata"*/)
 public class Assignment {
 
     @Id
