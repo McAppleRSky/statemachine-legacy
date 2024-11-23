@@ -1,4 +1,4 @@
-package ru.mrs.statemachine.tool.js;
+package ru.mrs.statemachine.service.statetransit.js;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -28,7 +28,7 @@ public class JsStateTransitTemplBuilderImpl implements JsStateTransitTemplBuilde
     }
 
     @Override
-    public JsStateTransitTemplBuilder setStates(List<Map<String, String>> stateMap) {
+    public JsStateTransitTemplBuilder setStates(List<Map<String, Object>> stateMap) {
         this.states = new String[stateMap.size()];
         LinkedHashMap<String, Object> rowHead = new LinkedHashMap<>();
         rowHead.put("rowh", Collections.singletonList(
@@ -37,7 +37,7 @@ public class JsStateTransitTemplBuilderImpl implements JsStateTransitTemplBuilde
                 .limit(4).collect(Collectors.toList());
         for (int i = 0; i < this.states.length; i++) {
             Map<String, Object> state = states.get(i);
-            this.states[i] = stateMap.get(i).get("WO_STATE");
+            this.states[i] = stateMap.get(i).get("WO_STATE").toString();
             state.put("title", this.states[i]);
             state.put("colSpan", 2);
         }

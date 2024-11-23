@@ -7,6 +7,8 @@
 <!-- https://stackoverflow.com/questions/45563329/how-to-add-dynamic-ref-in-vue-js -->
 <!-- https://mydev.fun/vue/options-api-template-refs -->
 <!-- https://stackoverflow.com/questions/9000136/canvas-inside-table -->
+<!-- https://vuejsdevelopers.com/2017/08/28/vue-js-ajax-recipes/ -->
+<!-- https://stackoverflow.com/questions/69909521/how-to-access-data-fields-in-vue-from-async-method/69909634 -->
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="utf-8">
@@ -17,7 +19,8 @@
   <link href="css/arrow.css" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
   <script type="text/javascript" src="js/vue-3.4.37/vue.global.js"></script>
-  <script type="text/javascript" src="js/babel-standalone-7.25.3/babel.min.js"></script>
+  <script type="text/javascript" src="js/babel-7.25.3/babel.min.js"></script>
+  <script type="text/javascript" src="js/axios-1.7.7/axios.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -193,7 +196,17 @@
         drawPlainArrow(direct ? 0 : canvas.width / 2, direct ? canvas.width : 0, canvas.clientHeight / 2, canvas);
       }
     },
-    beforeMount() {},
+    /*async refreshStateTransit(event) {
+      event.preventDefault();
+      this.data.content.pop();
+      this.data.content.push(await this.$http.get('/statetransit/v1/wSpace'));
+      console.log("refreshStateTransit")
+    },*/
+    beforeMount() {
+      this.data.content.pop();
+      axios.get('/statetransit/v0/wSpace')
+              .then(response => this.data.content.push(response))
+    },
     mounted() {
       let content = JSON.stringify(this.data.content[0]);
       console.log(content)

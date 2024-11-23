@@ -2,13 +2,13 @@ package ru.mrs.statemachine.entity.catalog.location;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.mrs.statemachine.entity.MySpec;
+//import ru.mrs.statemachine.entity.MySpec;
 
 import javax.persistence.*;
 
 @Getter @Setter
 //@Entity
-public class Space extends MySpec {
+public class Space /*extends MySpec*/ {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "catalog-generator")

@@ -18,6 +18,7 @@ public class StatemachineApplication //implements CommandLineRunner
 		context = new SpringApplicationBuilder(StatemachineApplication.class)
 //				.web(WebApplicationType.NONE) // .REACTIVE, .SERVLET
 				.run(args);
+
 		System.out.println("Boot Statemachine Application");
 	}
 

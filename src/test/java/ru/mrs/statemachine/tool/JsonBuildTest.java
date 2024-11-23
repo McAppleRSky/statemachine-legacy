@@ -6,8 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import ru.mrs.statemachine.tool.js.JsStateTransitTemplBuilder;
-import ru.mrs.statemachine.tool.js.JsStateTransitTemplBuilderImpl;
+import ru.mrs.statemachine.service.statetransit.js.JsStateTransitTemplBuilderImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;

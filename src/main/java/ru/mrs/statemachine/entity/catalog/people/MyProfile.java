@@ -11,8 +11,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Getter @Setter
 @EqualsAndHashCode
-@Entity
-@Table(name="t_myprofile"/*, schema="catalog"*/)
+//@Entity
+@Table(name="w_myprofile"/*, schema="catalog"*/)
 public class MyProfile implements Serializable {
 
     @Id
